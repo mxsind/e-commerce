@@ -13,17 +13,42 @@
 
 import React from 'react';
 
-export default class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+import Layout from 'components/Layout';
+import Header from 'components/Header';
+import Footer from 'components/Footer';
+import Main from 'components/Main';
 
+export default class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   static propTypes = {
     children: React.PropTypes.node,
   };
 
+  state = {
+    scrolled: 0,
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  handleScroll = () => {
+    const scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    this.setState({ scrolled: scrollTop });
+  }
+
   render() {
     return (
-      <div>
-        {React.Children.toArray(this.props.children)}
-      </div>
+      <Layout>
+        <Header scrolled={this.state.scrolled} />
+        <Main>
+          {React.Children.toArray(this.props.children)}
+        </Main>
+        <Footer />
+      </Layout>
     );
   }
 }
